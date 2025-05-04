@@ -43,7 +43,7 @@ public class OpenWeatherMapProvider implements WeatherProvider {
 
     public OpenWeatherMapProvider(RestTemplate template) {
         this.template = template;
-        logger.debug("OpenWeatherMapProvider initialized");
+        logger.info("OpenWeatherMapProvider initialized");
     }
 
     /**
@@ -55,7 +55,7 @@ public class OpenWeatherMapProvider implements WeatherProvider {
      */
     @Override
     public WeatherResponse fetch(String city) {
-        logger.debug("Fetching weather data from OpenWeatherMap API for {}", city);
+        logger.info("Fetching weather data from OpenWeatherMap API for {}", city);
         try {
             String url = String.format(OPENWEATHERMAP_API_URL, city, appId);
             Map<?, ?> resp = template.getForObject(url, Map.class);
@@ -90,7 +90,7 @@ public class OpenWeatherMapProvider implements WeatherProvider {
             out.setTemperatureDegrees(temperature.doubleValue());
             out.setWindSpeed(windSpeed.doubleValue());
 
-            logger.debug("Successfully fetched weather data for {}: temp={}, wind={}",
+            logger.info("Successfully fetched weather data for {}: temp={}, wind={}",
                     city, temperature, windSpeed);
             return out;
         } catch (Exception e) {

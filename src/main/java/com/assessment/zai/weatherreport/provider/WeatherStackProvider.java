@@ -36,7 +36,7 @@ public class WeatherStackProvider implements WeatherProvider {
      */
     public WeatherStackProvider(RestTemplate template) {
         this.template = template;
-        logger.debug("WeatherStackProvider initialized");
+        logger.info("WeatherStackProvider initialized");
     }
 
     /**
@@ -48,7 +48,7 @@ public class WeatherStackProvider implements WeatherProvider {
      */
     @Override
     public WeatherResponse fetch(String city) {
-        logger.debug("Fetching weather data from WeatherStack API for city: {}", city);
+        logger.info("Fetching weather data from WeatherStack API for city: {}", city);
         try {
             String url = String.format(WEATHERSTACK_API_URL, key, city);
             Map<?, ?> resp = template.getForObject(url, Map.class);
@@ -82,7 +82,7 @@ public class WeatherStackProvider implements WeatherProvider {
 
                 out.setTemperatureDegrees(temperature.doubleValue());
                 out.setWindSpeed(windSpeed.doubleValue());
-                logger.debug("Successfully fetched weather data for {}: temp={}, wind={}",
+                logger.info("Successfully fetched weather data for {}: temp={}, wind={}",
                         city, temperature, windSpeed);
                 return out;
             } catch (ClassCastException e) {

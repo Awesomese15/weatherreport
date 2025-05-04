@@ -53,7 +53,7 @@ public class WeatherService {
     @Cacheable(cacheNames = CACHE, key = "#city")
     @CircuitBreaker(name = "primary", fallbackMethod = "fallbackToSecondary")
     public WeatherResponse getWeather(String city) {
-        logger.info("Fetching weather from primary provider");
+        logger.info("Fetching weather from primary provider for {}", city);
         return primary.fetch(city);
     }
 
@@ -65,6 +65,7 @@ public class WeatherService {
      * @return Weather information from secondary provider
      */
     public WeatherResponse fallbackToSecondary(Exception ex, String city) {
+        logger.info("Primary provider failed, falling back to secondary for {}", city);
         return getSecondary(city);
     }
 
@@ -76,6 +77,7 @@ public class WeatherService {
      */
     @CircuitBreaker(name = "secondary", fallbackMethod = "fallbackToCache")
     WeatherResponse getSecondary(String city) {
+        logger.info("Fetching weather from secondary provider for {}", city);
         return secondary.fetch(city);
     }
 
@@ -88,11 +90,13 @@ public class WeatherService {
      * @throws IllegalStateException if no cached data is available
      */
     public WeatherResponse fallbackToCache(Throwable t, String city) {
+        logger.info("Both providers failed, attempting to use cached data for {}", city);
         Cache cache = cacheManager.getCache(CACHE);
         if (cache != null) {
             WeatherResponse stale = cache.get(city, WeatherResponse.class);
             if (stale != null) return stale;
         }
+        logger.error("All weather providers are down and no cache available for {}", city);
         throw new IllegalStateException("All weather providers are down");
     }
 }
